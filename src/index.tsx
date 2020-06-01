@@ -9,7 +9,7 @@ const prefix = 'mo-template-pc';
 
 class TemplatePc extends Component<ComponentProps, any> {
   static defaultProps = {
-    title: ''
+    title: '',
   };
 
   render() {

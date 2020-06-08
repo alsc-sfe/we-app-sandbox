@@ -30,6 +30,7 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "dependencies": {
+    "import-html-entry": "^1.7.3",
     "tslib": "1"
   },
   "devDependencies": {

@@ -1,8 +1,9 @@
 import { isRootSelector } from './util';
 import { ShadowDocument } from './document-create';
 import intercept from './element-intercept';
+import Sandbox from '..';
 
-export default function makeDocumentProxy(shadowDocument: ShadowDocument, sandbox: any) {
+export default function makeDocumentProxy(shadowDocument: ShadowDocument, sandbox: Sandbox, opts: any) {
   return new Proxy(shadowDocument, {
     get(target, key) {
       if (!target[key]) {
@@ -40,7 +41,7 @@ export default function makeDocumentProxy(shadowDocument: ShadowDocument, sandbo
           // link[stylesheet]、style无需拦截，因为html、head、body已经被修正
           if (key === 'appendChild') {
             return function (element: HTMLElement) {
-              const el = intercept(element, sandbox);
+              const el = intercept(element, sandbox, opts);
               return target[key].call(target, el);
             };
           }
@@ -51,6 +52,9 @@ export default function makeDocumentProxy(shadowDocument: ShadowDocument, sandbo
         return document[key];
       }
 
+      if (typeof target[key] === 'function') {
+        return target[key].bind(target);
+      }
       return target[key];
     },
   });

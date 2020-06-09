@@ -1,31 +1,33 @@
 import { isFunction, isUrl } from '../utils';
+import Sandbox from '..';
+import { ResourceWithType, ResourceType } from '@saasfe/we-app';
 
-export default function intercept(element: HTMLElement, sandbox: any) {
-  const tagName = element.tagName.toLowerCase();
+export default function intercept(element: HTMLElement, sandbox: Sandbox, opts: any) {
+  const tagName = element?.tagName?.toLowerCase?.();
 
   if (sandbox && (
     ['style', 'script'].indexOf(tagName) > -1 ||
     (tagName === 'link' && (element as HTMLLinkElement).rel === 'stylesheet')
   )) {
-    let content: [string, { with: { type: string } }];
+    let content: ResourceWithType;
     switch (tagName) {
       case 'style':
-        content = [(element as HTMLStyleElement).textContent, { with: { type: 'csstext' } }];
+        content = [(element as HTMLStyleElement).textContent, { with: { type: ResourceType.csstext } }];
         break;
       case 'link':
-        content = [(element as HTMLLinkElement).href, { with: { type: 'cssfile' } }];
+        content = [(element as HTMLLinkElement).href, { with: { type: ResourceType.cssfile } }];
         break;
       case 'script':
         if ((element as HTMLScriptElement).src) {
-          content = [(element as HTMLScriptElement).src, { with: { type: 'jsfile' } }];
+          content = [(element as HTMLScriptElement).src, { with: { type: ResourceType.jsfile } }];
         } else {
-          content = [(element as HTMLScriptElement).text, { with: { type: 'jstext' } }];
+          content = [(element as HTMLScriptElement).text, { with: { type: ResourceType.jstext } }];
         }
         break;
     }
 
     const { desc: resourceLoader, config } = sandbox.getResourceLoader();
-    resourceLoader.mount(content, { global: sandbox.global, sandbox }, config).then(() => {
+    resourceLoader.mount([content], { ...opts?.activeScope, root: sandbox.getContext(), sandbox }, config).then(() => {
       const loadEvent = new CustomEvent('load');
       if (isFunction(element.onload)) {
         element.onload(loadEvent);

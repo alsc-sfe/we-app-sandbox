@@ -1,35 +1,67 @@
-import JSSandbox from '@ice/sandbox';
+import JSSandbox from './jssandbox';
 import createUISandbox from './ui-sandbox';
+import { ResourceWithType, ResourceLoader } from '@saasfe/we-app';
+import sandboxResourceLoader from './resource-loader';
 
 export interface SandboxConfig {
-  resourceLoader: any;
+  resourceLoader?: any;
   container?: HTMLElement;
+  activeScope?: any;
 }
 
 export default class Sandbox {
-  public global: Window;
+  private global: Window;
 
-  private resourceLoader: any;
+  private resourceLoader: ResourceLoader<any> = sandboxResourceLoader;
 
   private jssandbox: any;
 
   private uisandbox: any;
 
   constructor(config: SandboxConfig) {
-    this.resourceLoader = config.resourceLoader;
+    if (config?.resourceLoader) {
+      this.resourceLoader = config.resourceLoader;
+    }
 
-    const jssandbox = new JSSandbox();
-    this.global = jssandbox.getSandbox();
+    this.jssandbox = new JSSandbox({ multiMode: true });
+    this.jssandbox.createProxySandbox();
+    this.global = this.jssandbox.getSandbox();
 
-    const { shadowDocument } = createUISandbox(this, config.container);
-    Object.defineProperty(this.global, 'document', { value: shadowDocument });
+    this.uisandbox = createUISandbox(this, { activeScope: config?.activeScope }, config?.container);
+    Object.defineProperty(this.global, 'document', { value: this.uisandbox.shadowDocument });
   }
 
-  setResourceLoader(resourceLoader: any) {
+  setContext(context: any) {
+    Object.keys(context).forEach((k) => {
+      this.global[k] = context[k];
+    });
+  }
+
+  getContext() {
+    return this.global;
+  }
+
+  setResourceLoader(resourceLoader: ResourceLoader<any>) {
     this.resourceLoader = resourceLoader;
   }
 
   getResourceLoader() {
     return this.resourceLoader;
+  }
+
+  loadResource(resources: ResourceWithType[]) {
+    const { desc: resourceLoader, config } = this.resourceLoader;
+    return resourceLoader.mount(resources, { root: this.global, sandbox: this }, config);
+  }
+
+  execScript(jstext: string) {
+    return new Promise((resolve) => {
+      this.jssandbox.execScriptInSandbox(jstext);
+      resolve();
+    });
+  }
+
+  destroy() {
+    this.jssandbox.clear();
   }
 }

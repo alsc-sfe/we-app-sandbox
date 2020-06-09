@@ -31,17 +31,24 @@
   "module": "es/index.js",
   "dependencies": {
     "@ice/sandbox": "^1.0.4",
-    "import-html-entry": "^1.7.3",
-    "tslib": "1"
+    "import-html-entry": "^1.7.3"
   },
   "devDependencies": {
+    "@saasfe/we-app": "^1.2.18",
     "@types/classnames": "2",
     "@types/react": "16",
     "@types/react-dom": "16",
+    "@typescript-eslint/eslint-plugin": "1",
+    "@typescript-eslint/parser": "1",
     "antd": "3",
     "classnames": "2",
     "copyfiles": "2",
     "cross-env": "5",
+    "eslint": "5",
+    "eslint-config-ali": "7",
+    "eslint-plugin-import": "2",
+    "eslint-plugin-react": "7",
+    "eslint-plugin-react-hooks": "1",
     "lesshint": "2",
     "pre-commit": "1",
     "prop-types": "15",
@@ -50,13 +57,7 @@
     "rimraf": "2",
     "stylelint": "7",
     "stylelint-config-standard": "16",
-    "@typescript-eslint/eslint-plugin": "1",
-    "@typescript-eslint/parser": "1",
-    "eslint": "5",
-    "eslint-config-ali": "7",
-    "eslint-plugin-import": "2",
-    "eslint-plugin-react": "7",
-    "eslint-plugin-react-hooks": "1",
+    "tslib": "1",
     "typescript": "3"
   },
   "peerDependencies": {

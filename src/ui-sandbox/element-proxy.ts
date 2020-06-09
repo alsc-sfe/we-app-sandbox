@@ -15,7 +15,7 @@ Element.prototype.appendChild = function (element: Node) {
   // @ts-ignore
   intercept(element, sandbox);
 
-  return rawElementAppendChild.apply(this, element);
+  return rawElementAppendChild.call(this, element);
 };
 
 Element.prototype.insertBefore = function (element: Node, refElement: Node) {

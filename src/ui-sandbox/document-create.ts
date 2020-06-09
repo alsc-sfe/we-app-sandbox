@@ -1,5 +1,6 @@
 import { nodeName, nodeNameShadowDocument } from './const';
 import makeDocumentProxy from './document-proxy';
+import Sandbox from '..';
 
 export interface ShadowDocument extends ShadowRoot {
   createElement?: typeof document.createElement;
@@ -7,14 +8,14 @@ export interface ShadowDocument extends ShadowRoot {
   createTextNode?: typeof document.createTextNode;
   defaultView?: Window;
   ownerDocument: null|Document;
-  documentElement?: ShadowDocument;
+  documentElement?: typeof document.documentElement;
   body?: typeof document.body;
   sandbox?: any;
   // @ts-ignore
   [p: string|symbol]: any;
 }
 
-export default function createDocument(sandbox: any, container?: HTMLElement) {
+export default function createDocument(sandbox: Sandbox, opts: any, container?: HTMLElement) {
   let rootElement: HTMLElement = container;
   if (!rootElement) {
     rootElement = document.createElement('div');
@@ -30,12 +31,17 @@ export default function createDocument(sandbox: any, container?: HTMLElement) {
   shadowDocument.createTextNode = (data: string) => document.createTextNode(data);
   // 修正dom-align中ownerDocument.defaultView.getComputedStyle
   shadowDocument.defaultView = shadowDocument.ownerDocument.defaultView;
-  shadowDocument.ownerDocument = null;
-  shadowDocument.documentElement = shadowDocument;
-  // @ts-ignore
-  shadowDocument.body = shadowDocument;
+  Object.defineProperty(shadowDocument, 'ownerDocument', {
+    value: null,
+  });
   shadowDocument.sandbox = sandbox;
   shadowDocument[nodeName] = nodeNameShadowDocument;
+
+  const documentElement = document.createElement('div');
+  Object.defineProperty(documentElement, 'ownerDocument', { value: shadowDocument });
+  shadowDocument.appendChild(documentElement);
+  shadowDocument.documentElement = documentElement;
+  shadowDocument.body = documentElement;
 
   const observer = new MutationObserver((mutationList) => {
     mutationList.forEach((mutation) => {
@@ -46,7 +52,7 @@ export default function createDocument(sandbox: any, container?: HTMLElement) {
   });
   observer.observe(shadowDocument, { subtree: true, childList: true });
 
-  const documentProxy = makeDocumentProxy(shadowDocument, sandbox);
+  const documentProxy = makeDocumentProxy(shadowDocument, sandbox, opts);
 
   return {
     shadowDocument: documentProxy,

@@ -48,5 +48,8 @@ export default function createDocument(sandbox: any, container?: HTMLElement) {
 
   const documentProxy = makeDocumentProxy(shadowDocument, sandbox);
 
-  return documentProxy;
+  return {
+    shadowDocument: documentProxy,
+    container: rootElement,
+  };
 }

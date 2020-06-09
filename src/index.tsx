@@ -1,5 +1,5 @@
 import JSSandbox from '@ice/sandbox';
-import UISandbox from './ui-sandbox';
+import createUISandbox from './ui-sandbox';
 
 export interface SandboxConfig {
   resourceLoader: any;
@@ -11,13 +11,17 @@ export default class Sandbox {
 
   private resourceLoader: any;
 
+  private jssandbox: any;
+
+  private uisandbox: any;
+
   constructor(config: SandboxConfig) {
     this.resourceLoader = config.resourceLoader;
 
     const jssandbox = new JSSandbox();
     this.global = jssandbox.getSandbox();
 
-    const shadowDocument = UISandbox(this, config.container);
+    const { shadowDocument } = createUISandbox(this, config.container);
     Object.defineProperty(this.global, 'document', { value: shadowDocument });
   }
 

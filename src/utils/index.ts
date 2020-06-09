@@ -5,3 +5,7 @@ export function isUrl(url: string) {
     return false;
   }
 }
+
+export function isFunction(o: any) {
+  return typeof o === 'function';
+}

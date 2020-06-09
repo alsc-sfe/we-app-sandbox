@@ -1,13 +1,20 @@
+import { nodeName, nodeNameShadowDocument } from './const';
+import makeDocumentProxy from './document-proxy';
+
 export interface ShadowDocument extends ShadowRoot {
   createElement?: typeof document.createElement;
   createElementNS?: typeof document.createElementNS;
   createTextNode?: typeof document.createTextNode;
   defaultView?: Window;
   ownerDocument: null|Document;
-  [p: string]: any;
+  documentElement?: ShadowDocument;
+  body?: typeof document.body;
+  sandbox?: any;
+  // @ts-ignore
+  [p: string|symbol]: any;
 }
 
-export default function createDocument(container?: HTMLElement) {
+export default function createDocument(sandbox: any, container?: HTMLElement) {
   let rootElement: HTMLElement = container;
   if (!rootElement) {
     rootElement = document.createElement('div');
@@ -25,7 +32,21 @@ export default function createDocument(container?: HTMLElement) {
   shadowDocument.defaultView = shadowDocument.ownerDocument.defaultView;
   shadowDocument.ownerDocument = null;
   shadowDocument.documentElement = shadowDocument;
+  // @ts-ignore
   shadowDocument.body = shadowDocument;
+  shadowDocument.sandbox = sandbox;
+  shadowDocument[nodeName] = nodeNameShadowDocument;
 
-  return shadowDocument;
+  const observer = new MutationObserver((mutationList) => {
+    mutationList.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        Object.defineProperty(node, 'ownerDocument', { value: shadowDocument });
+      });
+    });
+  });
+  observer.observe(shadowDocument, { subtree: true, childList: true });
+
+  const documentProxy = makeDocumentProxy(shadowDocument, sandbox);
+
+  return documentProxy;
 }

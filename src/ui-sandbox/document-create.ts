@@ -38,6 +38,7 @@ export default function createDocument(sandbox: Sandbox, opts: any, container?: 
   shadowDocument[nodeName] = nodeNameShadowDocument;
 
   const documentElement = document.createElement('div');
+  documentElement.setAttribute('role', 'shadow-body');
   Object.defineProperty(documentElement, 'ownerDocument', { value: shadowDocument });
   shadowDocument.appendChild(documentElement);
   shadowDocument.documentElement = documentElement;

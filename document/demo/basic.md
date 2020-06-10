@@ -7,6 +7,12 @@ PC模板
 
 ````jsx
 import Sandbox from "@alife/we-app-sandbox";
+import { Button } from 'antd';
+
+ReactDOM.render(
+  <Button type="primary">Button by antd</Button>,
+  mountNode,
+);
 
 const sandbox = new Sandbox(/* opts */);
 // 需要配置基础环境，如需要加载的基础资源
@@ -28,10 +34,11 @@ sandbox.loadResource([
   'https://gw.alipayobjects.com/os/lib/ant-design/icons/2.1.1/lib/umd.js',
   [
     `
-    console.log(moment().unix());
+    console.log('moment', moment().unix());
     const el = document.createElement('div');
-    el.innerHTML = '<div data-show="true" class="ant-alert ant-alert-warning ant-alert-banner"><i aria-label="icon: exclamation-circle" class="anticon anticon-exclamation-circle ant-alert-icon"><svg viewBox="64 64 896 896" focusable="false" class="" data-icon="exclamation-circle" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm-32 232c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V296zm32 440a48.01 48.01 0 0 1 0-96 48.01 48.01 0 0 1 0 96z"></path></svg></i><span class="ant-alert-message"><div class="alert-message-right alert-message"><span>一些文本</span><span class=""><a class="alert-ok-text"></a></span></div></span><span class="ant-alert-description"></span></div>';
     document.body.appendChild(el);
+    const { Button } = window['@alife/cook-pc'];
+    ReactDOM.render(React.createElement(Button, { type: 'primary' }, 'Button by cookpc'), el);
     `,
     { with: { type: 'jstext' } }
   ],

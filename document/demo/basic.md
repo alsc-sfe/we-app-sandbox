@@ -18,8 +18,8 @@ const sandbox = new Sandbox(/* opts */);
 // 需要配置基础环境，如需要加载的基础资源
 // 指向当前导入的库
 sandbox.setContext({
-  React,
-  ReactDOM,
+  // React,
+  // ReactDOM,
   // antd,
   // AntDesignIcons,
 });
@@ -27,6 +27,8 @@ sandbox.setContext({
 // sandbox.getResourceLoader();
 // 加载资源
 sandbox.loadResource([
+  'https://gw.alipayobjects.com/os/lib/react/16.8.6/umd/react.development.js',
+  'https://gw.alipayobjects.com/os/lib/react-dom/16.8.6/umd/react-dom.development.js',
   'https://gw.alipayobjects.com/os/lib/alife/cook-pc/3.27.3/dist/antd.min.css', 
   'https://gw.alipayobjects.com/os/lib/moment/2.24.0/min/moment.min.js',
   'https://gw.alipayobjects.com/os/lib/moment/2.24.0/locale/zh-cn.js',
@@ -37,12 +39,45 @@ sandbox.loadResource([
     console.log('moment', moment().unix());
     const el = document.createElement('div');
     document.body.appendChild(el);
-    const { Button } = window['@alife/cook-pc'];
+    const { Button, Modal } = window['@alife/cook-pc'];
     ReactDOM.render(React.createElement(Button, { type: 'primary' }, 'Button by cookpc'), el);
+    debugger;
+
+    const el1 = document.createElement('div');
+    el1.setAttribute('role', 'el1');
+    document.body.appendChild(el1);
+
+    const { useState, useCallback } = React;
+    function ModalTest() {
+      const [visible, setVisible] = useState(true);
+      const close = useCallback(() => {
+        debugger
+        setVisible(false);
+      }, []);
+
+      return React.createElement(Modal, {
+        title: "Basic Modal",
+        visible,
+        okText: '主按钮',
+        cancelText: '次按钮',
+        onOk: close,
+        onCancel: close
+      }, 'Some contents...');
+    }
+
+    ReactDOM.render(React.createElement(ModalTest), el1);
+    // Modal.info({
+    //   title: 'This is a notification message',
+    //   content: 'some messages...some messages...',
+    //   onOk() {},
+    // });
     `,
     { with: { type: 'jstext' } }
   ],
 ]);
+// 由于React使用的全局的React，事件代理被绑定在了真实的document上
+// 所以，Modal.info的button点击无反应
+
 // 加载执行业务代码
 // sandbox.loadResource(['index.html']);
 // 执行html代码

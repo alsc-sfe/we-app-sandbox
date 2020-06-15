@@ -55,7 +55,7 @@ sandbox.loadResource([
     const el = document.createElement('div');
     document.body.appendChild(el);
 
-    const { Button, Modal } = window['@alife/cook-pc'];
+    const { Button, Modal, DatePicker } = window['@alife/cook-pc'];
 
     const el1 = document.createElement('div');
     el1.setAttribute('role', 'el1');
@@ -89,9 +89,11 @@ sandbox.loadResource([
       return React.createElement('div', null, [
         React.createElement(Button, { type: 'primary', onClick: onClickButton }, 'Button by cookpc'),
         ' ',
-        React.createElement(Button, { type: 'primary', onClick: onClickShowModal }, 'show Modal'),
+        React.createElement(Button, { onClick: onClickShowModal }, 'show Modal'),
         ' ',
-        React.createElement(Button, { type: 'primary', onClick: onClickShowModalInfo }, 'show Modal.info'),
+        React.createElement(Button, { onClick: onClickShowModalInfo }, 'show Modal.info'),
+        ' ',
+        React.createElement(DatePicker),
         React.createElement(Modal, {
           title: "Basic Modal",
           visible,

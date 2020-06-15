@@ -19,6 +19,7 @@ export default function createDocument(sandbox: Sandbox, opts: any, container?: 
   let rootElement: HTMLElement = container;
   if (!rootElement) {
     rootElement = document.createElement('div');
+    rootElement.setAttribute('role', 'shadow-root');
     document.body.appendChild(rootElement);
   }
 

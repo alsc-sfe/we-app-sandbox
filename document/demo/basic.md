@@ -33,17 +33,15 @@ const sandbox = new Sandbox(/* opts */);
 // 需要配置基础环境，如需要加载的基础资源
 // 指向当前导入的库
 sandbox.setContext({
-  // React,
-  // ReactDOM,
-  // antd,
-  // AntDesignIcons,
+  React,
+  ReactDOM,
 });
 // sandbox.setResourceLoader();
 // sandbox.getResourceLoader();
 // 加载资源
 sandbox.loadResource([
-  'https://gw.alipayobjects.com/os/lib/react/16.8.6/umd/react.development.js',
-  'https://gw.alipayobjects.com/os/lib/react-dom/16.8.6/umd/react-dom.development.js',
+  // 'https://gw.alipayobjects.com/os/lib/react/16.8.6/umd/react.development.js',
+  // 'https://gw.alipayobjects.com/os/lib/react-dom/16.8.6/umd/react-dom.development.js',
   'https://gw.alipayobjects.com/os/lib/alife/cook-pc/3.27.3/dist/antd.min.css', 
   'https://gw.alipayobjects.com/os/lib/moment/2.24.0/min/moment.min.js',
   'https://gw.alipayobjects.com/os/lib/moment/2.24.0/locale/zh-cn.js',

@@ -25,7 +25,12 @@ export default function createDocument(sandbox: Sandbox, opts: any, container?: 
   // 开启ShadowDOM
   const shadowDocument: ShadowDocument = rootElement.attachShadow({ mode: 'open' });
   // 针对shadowBody的hack，对shadowDocument进行引用修正
-  shadowDocument.createElement = (tagName: any, options?: ElementCreationOptions) => document.createElement(tagName, options);
+  shadowDocument.createElement = (tagName: any, options?: ElementCreationOptions) => {
+    const node = document.createElement(tagName, options);
+    // 修正react在ShadowDOM中绑定事件代理时的对象
+    Object.defineProperty(node, 'ownerDocument', { value: shadowDocument });
+    return node;
+  };
   // @ts-ignore
   shadowDocument.createElementNS = (...args) => document.createElementNS(...args);
   shadowDocument.createTextNode = (data: string) => document.createTextNode(data);
@@ -37,21 +42,12 @@ export default function createDocument(sandbox: Sandbox, opts: any, container?: 
   shadowDocument.sandbox = sandbox;
   shadowDocument[nodeName] = nodeNameShadowDocument;
 
-  const documentElement = document.createElement('div');
-  documentElement.setAttribute('role', 'shadow-body');
-  Object.defineProperty(documentElement, 'ownerDocument', { value: shadowDocument });
-  shadowDocument.appendChild(documentElement);
-  shadowDocument.documentElement = documentElement;
-  shadowDocument.body = documentElement;
+  const shadowBody = shadowDocument.createElement('div');
+  shadowBody.setAttribute('role', 'shadow-body');
+  shadowDocument.appendChild(shadowBody);
 
-  const observer = new MutationObserver((mutationList) => {
-    mutationList.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        Object.defineProperty(node, 'ownerDocument', { value: shadowDocument });
-      });
-    });
-  });
-  observer.observe(shadowDocument, { subtree: true, childList: true });
+  shadowDocument.documentElement = shadowBody;
+  shadowDocument.body = shadowBody;
 
   const documentProxy = makeDocumentProxy(shadowDocument, sandbox, opts);
 

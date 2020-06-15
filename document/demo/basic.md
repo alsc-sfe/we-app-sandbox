@@ -14,6 +14,21 @@ ReactDOM.render(
   mountNode,
 );
 
+const rawDocAddEventListener = document.addEventListener;
+document.addEventListener = function(...args) {
+  console.log('docAddEventListener', args);
+  const [name, listener, ...rest] = args;
+  let params = args;
+  if (name === 'click') {
+    const callback = function(...p) {
+      console.log('click callback', p);
+      listener.apply(this, p);
+      params = [name, callback, ...rest];
+    };
+  }
+  rawDocAddEventListener.apply(document, params);
+}
+
 const sandbox = new Sandbox(/* opts */);
 // 需要配置基础环境，如需要加载的基础资源
 // 指向当前导入的库
@@ -39,9 +54,8 @@ sandbox.loadResource([
     console.log('moment', moment().unix());
     const el = document.createElement('div');
     document.body.appendChild(el);
+
     const { Button, Modal } = window['@alife/cook-pc'];
-    ReactDOM.render(React.createElement(Button, { type: 'primary' }, 'Button by cookpc'), el);
-    debugger;
 
     const el1 = document.createElement('div');
     el1.setAttribute('role', 'el1');
@@ -49,28 +63,47 @@ sandbox.loadResource([
 
     const { useState, useCallback } = React;
     function ModalTest() {
-      const [visible, setVisible] = useState(true);
+      const [visible, setVisible] = useState(false);
+
       const close = useCallback(() => {
-        debugger
         setVisible(false);
       }, []);
 
-      return React.createElement(Modal, {
-        title: "Basic Modal",
-        visible,
-        okText: '主按钮',
-        cancelText: '次按钮',
-        onOk: close,
-        onCancel: close
-      }, 'Some contents...');
+      const onClickButton = useCallback((...args) => {
+        console.log('button click', args);
+        alert('button clicked');
+      }, []);
+
+      const onClickShowModal = useCallback(() => {
+        setVisible(true);
+      }, []);
+
+      const onClickShowModalInfo = useCallback(() => {
+        Modal.info({
+          title: 'This is a notification message',
+          content: 'some messages...some messages...',
+          onOk() {},
+        });
+      }, []);
+
+      return React.createElement('div', null, [
+        React.createElement(Button, { type: 'primary', onClick: onClickButton }, 'Button by cookpc'),
+        ' ',
+        React.createElement(Button, { type: 'primary', onClick: onClickShowModal }, 'show Modal'),
+        ' ',
+        React.createElement(Button, { type: 'primary', onClick: onClickShowModalInfo }, 'show Modal.info'),
+        React.createElement(Modal, {
+          title: "Basic Modal",
+          visible,
+          okText: '主按钮',
+          cancelText: '次按钮',
+          onOk: close,
+          onCancel: close
+        }, 'Some contents...'),
+      ]);
     }
 
-    ReactDOM.render(React.createElement(ModalTest), el1);
-    // Modal.info({
-    //   title: 'This is a notification message',
-    //   content: 'some messages...some messages...',
-    //   onOk() {},
-    // });
+    ReactDOM.render(React.createElement(ModalTest), el1);    
     `,
     { with: { type: 'jstext' } }
   ],

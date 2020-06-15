@@ -25,11 +25,12 @@ export default function createDocument(sandbox: Sandbox, opts: any, container?: 
 
   // 开启ShadowDOM
   const shadowDocument: ShadowDocument = rootElement.attachShadow({ mode: 'open' });
+  const documentProxy = makeDocumentProxy(shadowDocument, sandbox, opts);
   // 针对shadowBody的hack，对shadowDocument进行引用修正
   shadowDocument.createElement = (tagName: any, options?: ElementCreationOptions) => {
     const node = document.createElement(tagName, options);
     // 修正react在ShadowDOM中绑定事件代理时的对象
-    Object.defineProperty(node, 'ownerDocument', { value: shadowDocument });
+    Object.defineProperty(node, 'ownerDocument', { value: documentProxy });
     return node;
   };
   // @ts-ignore
@@ -37,20 +38,18 @@ export default function createDocument(sandbox: Sandbox, opts: any, container?: 
   shadowDocument.createTextNode = (data: string) => document.createTextNode(data);
   // 修正dom-align中ownerDocument.defaultView.getComputedStyle
   shadowDocument.defaultView = shadowDocument.ownerDocument.defaultView;
-  Object.defineProperty(shadowDocument, 'ownerDocument', {
-    value: null,
-  });
+  Object.defineProperty(shadowDocument, 'ownerDocument', { value: null });
   shadowDocument.sandbox = sandbox;
   shadowDocument[nodeName] = nodeNameShadowDocument;
 
   const shadowBody = shadowDocument.createElement('div');
+  // 修正elementUI datePicker 定位问题
+  Object.defineProperty(shadowBody, 'parentNode', { value: documentProxy });
   shadowBody.setAttribute('role', 'shadow-body');
   shadowDocument.appendChild(shadowBody);
 
   shadowDocument.documentElement = shadowBody;
   shadowDocument.body = shadowBody;
-
-  const documentProxy = makeDocumentProxy(shadowDocument, sandbox, opts);
 
   return {
     shadowDocument: documentProxy,

@@ -14,21 +14,6 @@ ReactDOM.render(
   mountNode,
 );
 
-const rawDocAddEventListener = document.addEventListener;
-document.addEventListener = function(...args) {
-  console.log('docAddEventListener', args);
-  const [name, listener, ...rest] = args;
-  let params = args;
-  if (name === 'click') {
-    const callback = function(...p) {
-      console.log('click callback', p);
-      listener.apply(this, p);
-      params = [name, callback, ...rest];
-    };
-  }
-  rawDocAddEventListener.apply(document, params);
-}
-
 const sandbox = new Sandbox(/* opts */);
 // 需要配置基础环境，如需要加载的基础资源
 // 指向当前导入的库
@@ -50,7 +35,9 @@ sandbox.loadResource([
   [
     `
     console.log('moment', moment().unix());
-    const el = document.createElement('div');
+
+    const el = document.createElement('h2');
+    el.innerText = 'antd in Sandbox';
     document.body.appendChild(el);
 
     const { Button, Modal, DatePicker } = window['@alife/cook-pc'];
@@ -85,14 +72,15 @@ sandbox.loadResource([
       }, []);
 
       return React.createElement('div', null, [
-        React.createElement(Button, { type: 'primary', onClick: onClickButton }, 'Button by cookpc'),
+        React.createElement(Button, { type: 'primary', onClick: onClickButton, key: 1 }, 'Button by cookpc'),
         ' ',
-        React.createElement(Button, { onClick: onClickShowModal }, 'show Modal'),
+        React.createElement(Button, { onClick: onClickShowModal, key: 2 }, 'show Modal'),
         ' ',
-        React.createElement(Button, { onClick: onClickShowModalInfo }, 'show Modal.info'),
+        React.createElement(Button, { onClick: onClickShowModalInfo, key: 3 }, 'show Modal.info'),
         ' ',
-        React.createElement(DatePicker),
+        React.createElement(DatePicker, { key: 4 }),
         React.createElement(Modal, {
+          key: 5,
           title: "Basic Modal",
           visible,
           okText: '主按钮',
@@ -108,20 +96,16 @@ sandbox.loadResource([
     { with: { type: 'jstext' } }
   ],
 ]);
-// 由于React使用的全局的React，事件代理被绑定在了真实的document上
-// 所以，Modal.info的button点击无反应
 
-// 加载执行业务代码
-// sandbox.loadResource(['index.html']);
-// 执行html代码
-// sandbox.runHTML('<div class="container"></div>');
 // 执行js代码
 // sandbox.execScript('console.log(124)');
-// 执行css代码
-// sandbox.runCSS('.container { color: red }');
+
 // 获取全局变量
 // const global = sandbox.getContext();
+
 // 如何与resourceLoader结合
+// sandbox.getResourceLoader();
+
 // 如何与render结合
 // render.mount(App, container, props) {
 //   const { React, ReactDOM } = props.pageScope.root;

@@ -1,4 +1,4 @@
-import { isRootSelector } from './util';
+import { isRootSelector, getTargetValue } from './util';
 import { ShadowDocument } from './document-create';
 import intercept from './element-intercept';
 import Sandbox from '..';
@@ -39,7 +39,8 @@ export default function makeDocumentProxy(shadowDocument: ShadowDocument, sandbo
             console.log('document.addEventListener');
           }
 
-          return document[key].bind(document);
+          // 避免存在静态属性的方法在经过bind之后丢失静态属性
+          return getTargetValue(document, document[key]);
         }
 
         return document[key];

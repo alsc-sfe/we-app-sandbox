@@ -33,9 +33,6 @@ export default function createDocument(sandbox: Sandbox, opts: any, container?: 
     Object.defineProperty(node, 'ownerDocument', { value: documentProxy });
     return node;
   };
-  // @ts-ignore
-  shadowDocument.createElementNS = (...args) => document.createElementNS(...args);
-  shadowDocument.createTextNode = (data: string) => document.createTextNode(data);
   // 修正dom-align中ownerDocument.defaultView.getComputedStyle
   shadowDocument.defaultView = shadowDocument.ownerDocument.defaultView;
   Object.defineProperty(shadowDocument, 'ownerDocument', { value: null });

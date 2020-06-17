@@ -28,13 +28,13 @@ sandbox.loadResource([
   // 'https://gw.alipayobjects.com/os/lib/react/16.8.6/umd/react.development.js',
   // 'https://gw.alipayobjects.com/os/lib/react-dom/16.8.6/umd/react-dom.development.js',
   'https://gw.alipayobjects.com/os/lib/alife/cook-pc/3.27.3/dist/antd.min.css', 
-  'https://gw.alipayobjects.com/os/lib/moment/2.24.0/min/moment.min.js',
-  'https://gw.alipayobjects.com/os/lib/moment/2.24.0/locale/zh-cn.js',
+  'https://gw.alipayobjects.com/os/lib/moment/2.26.0/moment.js',
+  'https://gw.alipayobjects.com/os/lib/moment/2.26.0/locale/zh-cn.js',
   'https://gw.alipayobjects.com/os/lib/alife/cook-pc/3.27.3/dist/antd-with-locales.min.js',
   'https://gw.alipayobjects.com/os/lib/ant-design/icons/2.1.1/lib/umd.js',
   [
     `
-    console.log('moment', moment().unix());
+    console.log('moment', moment().unix(), moment.isMoment);
 
     const el = document.createElement('h2');
     el.innerText = 'antd in Sandbox';

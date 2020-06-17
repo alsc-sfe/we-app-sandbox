@@ -8,17 +8,6 @@ export default function makeDocumentProxy(shadowDocument: ShadowDocument, sandbo
     get(target, key) {
       if (!target[key]) {
         if (typeof document[key] === 'function') {
-          // 拦截 createElement，修正ownerDocument指向
-          if (key === 'createElement') {
-            return function (selector) {
-              const el = document.createElement(selector);
-              // 修正react在ShadowDOM中绑定事件代理时的对象
-              Object.defineProperty(el, 'ownerDocument', { value: shadowDocument });
-
-              return el;
-            };
-          }
-
           // 拦截元素查询方法，保证html、head、body能够正确返回
           if (key === 'querySelector') {
             return function (selector) {
@@ -44,6 +33,10 @@ export default function makeDocumentProxy(shadowDocument: ShadowDocument, sandbo
               const el = intercept(element, sandbox, opts);
               return target[key].call(target, el);
             };
+          }
+
+          if (key === 'addEventListener') {
+            console.log('document.addEventListener');
           }
 
           return document[key].bind(document);

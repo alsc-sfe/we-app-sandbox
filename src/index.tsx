@@ -1,4 +1,4 @@
-import JSSandbox from './jssandbox';
+import JSSandbox from '@ice/sandbox';
 import createUISandbox from './ui-sandbox';
 import { ResourceWithType, ResourceLoader } from '@saasfe/we-app';
 import sandboxResourceLoader from './resource-loader';

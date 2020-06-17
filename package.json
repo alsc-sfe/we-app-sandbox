@@ -30,7 +30,7 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "dependencies": {
-    "@ice/sandbox": "^1.0.4",
+    "@ice/sandbox": "beta",
     "import-html-entry": "^1.7.3"
   },
   "devDependencies": {

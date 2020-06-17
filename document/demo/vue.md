@@ -10,16 +10,11 @@ import Sandbox from "@alife/we-app-sandbox";
 
 const sandbox = new Sandbox(/* opts */);
 
-const rawGetComputedStyle = window.getComputedStyle;
-window.getComputedStyle = function(el) {
-  console.log('rawGetComputedStyle', el);
-  return rawGetComputedStyle.apply(window, [el]);
-};
-
 // vue 中datepicker会做定位计算
 // t.parentNode 会访问到 shadowRoot，也就是 shadowDocument
 // 而 window.document 不是 shadowDocument，而是 documentProxy
-// 需要替换 window.document 的实现方式
+// 需要替换 parentNode
+// 不替换 window.document 的实现的原因是，window.document上的属性和方法被使用得比较频繁，必须保留proxy形式
 // function u(t) {
 //   var i = t.parentNode;
 //   return i ? i === e.document ? e.document.body.scrollTop || e.document.body.scrollLeft ? e.document.body : e.document.documentElement : -1 !== ["scroll", "auto"].indexOf(o(i, "overflow")) || -1 !== ["scroll", "auto"].indexOf(o(i, "overflow-x")) || -1 !== ["scroll", "auto"].indexOf(o(i, "overflow-y")) ? i : u(t.parentNode) : t

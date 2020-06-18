@@ -1,11 +1,11 @@
 {
-  "name": "@alife/we-app-sandbox",
-  "version": "1.0.0",
+  "name": "@saasfe/we-app-sandbox",
+  "version": "0.0.1-0",
   "description": "we app sandbox",
-  "homepage": "http://gitlab.alibaba-inc.com/saas-biz-components/we-app-sandbox",
+  "homepage": "https://github.com/alsc-sfe/we-app-sandbox",
   "repository": {
     "type": "git",
-    "url": "http://gitlab.alibaba-inc.com/saas-biz-components/we-app-sandbox"
+    "url": "https://github.com/alsc-sfe/we-app-sandbox"
   },
   "author": "少楚",
   "files": [
@@ -76,6 +76,6 @@
     "lint"
   ],
   "publishConfig": {
-    "registry": "http://registry.npm.alibaba-inc.com"
+    "registry": "https://registry.npmjs.org/"
   }
 }

@@ -6,6 +6,7 @@ title: demo1
 PC模板
 
 ````jsx
+import './style.less';
 import Sandbox from "@alife/we-app-sandbox";
 import { Button } from 'antd';
 

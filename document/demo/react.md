@@ -7,7 +7,7 @@ PC模板
 
 ````jsx
 import './style.less';
-import Sandbox from "@alife/we-app-sandbox";
+import Sandbox from "@saasfe/we-app-sandbox";
 import { Button } from 'antd';
 
 ReactDOM.render(

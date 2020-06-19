@@ -6,7 +6,7 @@ title: demo1
 PC模板
 
 ````jsx
-import Sandbox from "@alife/we-app-sandbox";
+import Sandbox from "@saasfe/we-app-sandbox";
 
 const sandbox = new Sandbox(/* opts */);
 

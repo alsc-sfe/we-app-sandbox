@@ -25,17 +25,30 @@ export function createSandbox() {
     'https://gw.alipayobjects.com/os/lib/ant-design/icons/2.1.1/lib/umd.js',
     [
       `
+      .container {
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      `,
+      { with: { type: 'csstext' } }
+    ],
+    [
+      `
       console.log('moment', moment().unix(), moment.isMoment);
+
+      const container = document.createElement('div');
+      container.className = 'container';
+      document.body.appendChild(container);
 
       const el = document.createElement('h2');
       el.innerText = 'antd in Sandbox';
-      document.body.appendChild(el);
+      container.appendChild(el);
 
       const { Button, Modal, DatePicker } = window['@alife/cook-pc'];
 
       const el1 = document.createElement('div');
       el1.setAttribute('role', 'el1');
-      document.body.appendChild(el1);
+      container.appendChild(el1);
 
       const { useState, useCallback } = React;
       function ModalTest() {

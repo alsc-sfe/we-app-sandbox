@@ -30,8 +30,21 @@ export function createSandbox() {
     'https://gw.alipayobjects.com/os/lib/element-ui/2.13.2/lib/index.js',
     [
       `
+      .container {
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      `,
+      { with: { type: 'csstext' } }
+    ],
+    [
+      `
+      const container = document.createElement('div');
+      container.className = 'container';
+      document.body.appendChild(container);
+
       const el = document.createElement('div');
-      document.body.appendChild(el);
+      container.appendChild(el);
 
       let html = '<h2>elementUI in Sandbox</h2>';
       html += '<div id="app">';

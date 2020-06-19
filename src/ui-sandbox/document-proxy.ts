@@ -37,9 +37,10 @@ export default class ShadowDocumentProxy {
     const shadowRoot: ShadowDocument = rootElement.attachShadow({ mode: 'open' });
 
     const style = document.createElement('style');
-    style.innerText = `
-      :host {
+    style.textContent = `
+      :host, div {
         all: initial;
+        display: block;
       }
     `;
     shadowRoot.appendChild(style);

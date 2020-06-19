@@ -35,6 +35,15 @@ export default class ShadowDocumentProxy {
   private createShadowDocument(rootElement: HTMLElement, sandbox: Sandbox, opts: any) {
     // 开启ShadowDOM
     const shadowRoot: ShadowDocument = rootElement.attachShadow({ mode: 'open' });
+
+    const style = document.createElement('style');
+    style.innerText = `
+      :host {
+        all: initial;
+      }
+    `;
+    shadowRoot.appendChild(style);
+
     const shadowDocument = this.makeDocumentProxy(shadowRoot, sandbox, opts);
     // 针对shadowBody的hack，对shadowDocument进行引用修正
     shadowDocument.createElement = (tagName: any, options?: ElementCreationOptions) => {

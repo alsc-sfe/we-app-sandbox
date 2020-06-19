@@ -20,7 +20,7 @@ export default class Sandbox {
 
   private uisandbox: UISandbox;
 
-  constructor(config: SandboxConfig) {
+  constructor(config?: SandboxConfig) {
     if (config?.resourceLoader) {
       this.resourceLoader = config.resourceLoader;
     }

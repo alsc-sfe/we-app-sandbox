@@ -8,6 +8,15 @@ interface SandboxResourceLoaderOpts {
 
 const resoureCache = {};
 
+function fetchText(url: string) {
+  if (resoureCache[url]) {
+    return Promise.resolve(resoureCache[url]);
+  }
+  const p = fetch(url).then(res => res.text());
+  resoureCache[url] = p;
+  return p;
+}
+
 function makeResourceWithType(r: string|ResourceWithType): ResourceWithType {
   if (Array.isArray(r)) {
     return r;
@@ -37,8 +46,7 @@ const sandboxResourceLoader: ResourceLoader<SandboxResourceLoaderOpts> = {
 
             switch (resource[1].with.type) {
               case ResourceType.jsfile:
-                pResource = fetch(resource[0])
-                  .then(res => res.text())
+                pResource = fetchText(resource[0])
                   .then(jstext => sandbox.execScript(jstext));
                 break;
               case ResourceType.jstext:

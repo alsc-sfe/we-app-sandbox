@@ -1,6 +1,6 @@
 import JSSandbox from '@ice/sandbox';
 import createUISandbox from './ui-sandbox';
-import { ResourceWithType, ResourceLoader } from '@saasfe/we-app';
+import { ResourceWithType, ResourceLoader } from '@saasfe/we-app/es/resource-loader';
 import sandboxResourceLoader from './resource-loader';
 
 export interface SandboxConfig {

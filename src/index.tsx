@@ -1,5 +1,5 @@
 import JSSandbox from '@ice/sandbox';
-import createUISandbox from './ui-sandbox';
+import UISandbox from './ui-sandbox';
 import { ResourceWithType, ResourceLoader } from '@saasfe/we-app/es/resource-loader';
 import sandboxResourceLoader from './resource-loader';
 
@@ -14,9 +14,9 @@ export default class Sandbox {
 
   private resourceLoader: ResourceLoader<any> = sandboxResourceLoader;
 
-  private jssandbox: any;
+  private jssandbox: JSSandbox;
 
-  private uisandbox: any;
+  private uisandbox: UISandbox;
 
   constructor(config: SandboxConfig) {
     if (config?.resourceLoader) {
@@ -27,8 +27,8 @@ export default class Sandbox {
     this.jssandbox.createProxySandbox();
     this.global = this.jssandbox.getSandbox();
 
-    this.uisandbox = createUISandbox(this, { activeScope: config?.activeScope }, config?.container);
-    Object.defineProperty(this.global, 'document', { value: this.uisandbox.shadowDocument });
+    this.uisandbox = new UISandbox(this, { activeScope: config?.activeScope }, config?.container);
+    Object.defineProperty(this.global, 'document', { value: this.uisandbox.getShadowDocument() });
   }
 
   setContext(context: any) {
@@ -62,6 +62,7 @@ export default class Sandbox {
   }
 
   destroy() {
+    this.uisandbox.destroy();
     this.jssandbox.clear();
   }
 }

@@ -1,7 +1,7 @@
 import { isRootSelector, getTargetValue } from './util';
 import { ShadowDocument } from './uisandbox';
 import intercept from './element-intercept';
-import { nodeName, nodeNameShadowDocument } from './const';
+import { SymbolIsShadowDocument } from './const';
 import Sandbox from '..';
 
 export default class ShadowDocumentProxy {
@@ -47,7 +47,7 @@ export default class ShadowDocumentProxy {
     shadowDocument.defaultView = shadowDocument.ownerDocument.defaultView;
     Object.defineProperty(shadowDocument, 'ownerDocument', { value: null });
     shadowDocument.sandbox = sandbox;
-    shadowDocument[nodeName] = nodeNameShadowDocument;
+    shadowDocument[SymbolIsShadowDocument] = true;
     return shadowDocument;
   }
 

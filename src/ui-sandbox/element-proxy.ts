@@ -1,5 +1,6 @@
-import { nodeName, nodeNameShadowDocument } from './const';
+import { SymbolIsShadowDocument } from './const';
 import intercept from './element-intercept';
+import { SymbolByResourceLoader } from '../utils/const';
 
 const rawElementAppendChild = Element.prototype.appendChild;
 const rawElementInsertBefore = Element.prototype.insertBefore;
@@ -9,13 +10,15 @@ Element.prototype.appendChild = function (element: Node) {
   // 拦截并注入到 shadowDocument.body中，
   // 记录在当前页面scope上，卸载时需要移除
   let sandbox: any;
-  if (this.ownerDocument[nodeName] === nodeNameShadowDocument) {
+  if (element && !element[SymbolByResourceLoader] && this.ownerDocument[SymbolIsShadowDocument]) {
     sandbox = this.ownerDocument.sandbox;
   }
-  // @ts-ignore
-  intercept(element, sandbox);
 
-  return rawElementAppendChild.call(this, element);
+  let el = element;
+  // @ts-ignore
+  el = intercept(element, sandbox);
+
+  return rawElementAppendChild.call(this, el);
 };
 
 Element.prototype.insertBefore = function (element: Node, refElement: Node) {
@@ -23,11 +26,13 @@ Element.prototype.insertBefore = function (element: Node, refElement: Node) {
   // 拦截并注入到 shadowDocument.body中，
   // 记录在当前页面scope上，卸载时需要移除
   let sandbox: any;
-  if (this.ownerDocument[nodeName] === nodeNameShadowDocument) {
+  if (element && !element[SymbolByResourceLoader] && this.ownerDocument[SymbolIsShadowDocument]) {
     sandbox = this.ownerDocument.sandbox;
   }
-  // @ts-ignore
-  intercept(element, sandbox);
 
-  return rawElementInsertBefore.call(this, element, refElement);
+  let el = element;
+  // @ts-ignore
+  el = intercept(element, sandbox);
+
+  return rawElementInsertBefore.call(this, el, refElement);
 };

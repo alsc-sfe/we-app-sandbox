@@ -9,6 +9,8 @@ export interface SandboxConfig {
   activeScope?: any;
 }
 
+const sandboxs: Sandbox[] = [];
+
 export default class Sandbox {
   private global: Window;
 
@@ -29,6 +31,10 @@ export default class Sandbox {
 
     this.uisandbox = new UISandbox(this, { activeScope: config?.activeScope }, config?.container);
     Object.defineProperty(this.global, 'document', { value: this.uisandbox.getShadowDocument() });
+
+    sandboxs.push(this);
+
+    console.log(sandboxs);
   }
 
   setContext(context: any) {
@@ -64,5 +70,8 @@ export default class Sandbox {
   destroy() {
     this.uisandbox.destroy();
     this.jssandbox.clear();
+
+    const index = sandboxs.indexOf(this);
+    sandboxs.splice(index, 1);
   }
 }

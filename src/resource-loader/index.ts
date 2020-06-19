@@ -1,5 +1,6 @@
 import { ResourceLoader, ResourceWithType, ResourceType } from '@saasfe/we-app/es/resource-loader';
 import { SafeHookScope } from '@saasfe/we-app/es/hooks/type';
+import { SymbolByResourceLoader } from '../utils/const';
 
 interface SandboxResourceLoaderOpts {
   [p: string]: any;
@@ -28,10 +29,12 @@ const sandboxResourceLoader: ResourceLoader<SandboxResourceLoaderOpts> = {
       await resources.reduce((p, r) => {
         const resource = makeResourceWithType(r);
         return p.then(() => {
-          let pResource: Promise<any> = resoureCache[resource[0]];
+          let pResource: Promise<any>;
+
           if (!pResource) {
             const doc = root.document;
             const resourceLoaded = getData?.('sandboxResourceLoaded') || [];
+
             switch (resource[1].with.type) {
               case ResourceType.jsfile:
                 pResource = fetch(resource[0])
@@ -46,6 +49,7 @@ const sandboxResourceLoader: ResourceLoader<SandboxResourceLoaderOpts> = {
                 const link = doc.createElement('link');
                 link.rel = 'stylesheet';
                 link.href = resource[0];
+                link[SymbolByResourceLoader] = true;
                 doc.body.appendChild(link);
                 pResource = Promise.resolve(link);
                 resourceLoaded.push(link);
@@ -54,19 +58,22 @@ const sandboxResourceLoader: ResourceLoader<SandboxResourceLoaderOpts> = {
                 // eslint-disable-next-line
                 const style = doc.createElement('style');
                 style.textContent = resource[0];
+                style[SymbolByResourceLoader] = true;
                 doc.body.appendChild(style);
                 pResource = Promise.resolve(style);
                 resourceLoaded.push(style);
                 break;
               default:
             }
+
             setData?.('sandboxResourceLoaded', resourceLoaded);
           }
-          resoureCache[resource[0]] = pResource;
+
           return pResource;
         });
       }, Promise.resolve());
     },
+
     async unmount(resources: ResourceWithType[], activeScope: SafeHookScope, opts: SandboxResourceLoaderOpts) {
       const { getData } = activeScope;
       const resourceLoaded = getData?.('sandboxResourceLoaded') || [];

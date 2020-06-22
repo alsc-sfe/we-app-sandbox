@@ -38,7 +38,7 @@ export default class ShadowDocumentProxy {
 
     const style = document.createElement('style');
     style.textContent = `
-      :host, div {
+      :host, div[role=shadow-body] {
         all: initial;
         display: block;
       }

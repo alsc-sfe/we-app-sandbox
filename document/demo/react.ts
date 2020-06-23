@@ -36,6 +36,10 @@ export function createSandbox() {
       `
       console.log('moment', moment().unix(), moment.isMoment);
 
+      const style = document.createElement('style');
+      style.textContent = 'div{color: yellow}';
+      document.appendChild(style);
+
       const container = document.createElement('div');
       container.className = 'container';
       document.body.appendChild(container);

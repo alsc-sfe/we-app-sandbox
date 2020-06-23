@@ -32,8 +32,12 @@ export default class UISandbox {
   destroy() {
     this.shadowDocumentProxy.destroy();
 
-    this.rootElement.style.display = 'none';
-    this.rootElement?.parentNode?.removeChild?.(this.rootElement);
+    if (this.rootElement?.parentNode) {
+      this.rootElement.style.display = 'none';
+      this.rootElement.parentNode.removeChild(this.rootElement);
+    }
+
+    this.rootElement = null;
   }
 
   private createRootElement(container?: HTMLElement) {

@@ -7,9 +7,9 @@ import Sandbox from '..';
 export default class ShadowDocumentProxy {
   private shadowDocument: ShadowDocument;
 
-  private documentEventListener: { [eventName: string]: EventListener[] } = {};
+  private rawDocumentEventListener: { [eventName: string]: [EventListener, EventListenerOptions][] } = {};
 
-  private documentEventListenerOpts: { [eventName: string]: EventListenerOptions[]} = {};
+  private documentEventListener: { [eventName: string]: [EventListener, EventListenerOptions][] } = {};
 
   constructor(rootElement: HTMLElement, sandbox: Sandbox, opts: any) {
     this.shadowDocument = this.createShadowDocument(rootElement, sandbox, opts);
@@ -22,14 +22,15 @@ export default class ShadowDocumentProxy {
 
   destroy() {
     // 移除document上的事件监听
-    Object.keys(this.documentEventListener).forEach((eventName) => {
-      const listeners = this.documentEventListener[eventName];
-      const listenersOpts = this.documentEventListenerOpts[eventName];
-      listeners.forEach((listener, index) => {
-        const opts = listenersOpts[index];
+    Object.keys(this.rawDocumentEventListener).forEach((eventName) => {
+      const listeners = this.rawDocumentEventListener[eventName];
+      listeners.forEach(([listener, opts]) => {
         document.removeEventListener(eventName, listener, opts);
       });
     });
+
+    this.rawDocumentEventListener = {};
+    this.documentEventListener = {};
   }
 
   private createShadowDocument(rootElement: HTMLElement, sandbox: Sandbox, opts: any) {
@@ -114,19 +115,15 @@ export default class ShadowDocumentProxy {
           return function (name: string, callback: EventListener, options: EventListenerOptions) {
             // 针对elementUI修正事件
             // https://github.com/ElemeFE/element/blob/dc8bdc021e/src/utils/clickoutside.js#L10
+            // 当前仅关联mousedown和mouseup，而click事件会出现多次绑定，问题待查
             if (['mousedown', 'mouseup'].indexOf(name) > -1) {
-              const listener: EventListener = function (evt: Event) {
-                // 如果shadowDocument的回调执行了，则document的回调不再执行
-                if (evt.currentTarget === shadowDocument) {
-                  evt.stopPropagation();
-                }
-                callback(evt);
-              };
+              const listener: EventListener = that.createDocumentEventListener(target, name, callback, options);
               getTargetValue(target, target[key])(name, listener, options);
-              that.captureDocumentEvent(name, listener, options);
-              getTargetValue(document, document[key])(name, listener, options);
+              // 避免document重复绑定事件回调
+              getTargetValue(document, document[key])(name, callback, options);
               return;
             }
+
             getTargetValue(target, target[key])(name, callback, options);
           };
         }
@@ -140,17 +137,54 @@ export default class ShadowDocumentProxy {
     });
   }
 
-  private captureDocumentEvent(eventName: string, listener: EventListener, opts: EventListenerOptions) {
+  private createDocumentEventListener(shadowDocument: ShadowDocument,
+    eventName: string, callback: EventListener, opts: EventListenerOptions) {
+    this.rawDocumentEventListener[eventName] = this.rawDocumentEventListener[eventName] ||
+      ([] as [EventListener, EventListenerOptions][]);
     this.documentEventListener[eventName] = this.documentEventListener[eventName] ||
-      ([] as EventListener[]);
-    this.documentEventListenerOpts[eventName] = this.documentEventListenerOpts[eventName] ||
-      ([] as EventListenerOptions[]);
+      ([] as [EventListener, EventListenerOptions][]);
+
+    const rawListeners = this.rawDocumentEventListener[eventName];
     const listeners = this.documentEventListener[eventName];
-    const listenersOpts = this.documentEventListenerOpts[eventName];
-    if (listeners.indexOf(listener) > -1) {
-      return;
+
+    // 事件回调已存在，则返回该回调
+    const index = rawListeners.findIndex(([listener, options]) => {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      return callback === listener && compareEventListenerOptions(options, opts);
+    });
+    if (index > -1) {
+      return listeners[index][0];
     }
-    listeners.push(listener);
-    listenersOpts.push(opts);
+
+    // 记录原始事件回调
+    rawListeners.push([callback, opts]);
+
+    const listener = function (evt: Event) {
+      // 如果shadowDocument的回调执行了，则document的回调不再执行
+      if (evt.currentTarget === shadowDocument) {
+        evt.stopPropagation();
+      }
+      callback(evt);
+    };
+
+    // 记录修正后的事件回调
+    listeners.push([listener, opts]);
+
+    return listener;
   }
+}
+
+function lineupEventListenerOptions(opts: EventListenerOptions) {
+  const o = typeof opts === 'boolean' ? { capture: opts } : opts;
+  const o1 = {};
+  Object.keys(o).sort().forEach((k) => {
+    o1[k] = o[k];
+  });
+  return o;
+}
+
+function compareEventListenerOptions(opts1: EventListenerOptions = {}, opts2: EventListenerOptions = {}) {
+  const o1 = lineupEventListenerOptions(opts1);
+  const o2 = lineupEventListenerOptions(opts2);
+  return JSON.stringify(o1) === JSON.stringify(o2);
 }

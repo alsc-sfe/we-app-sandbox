@@ -117,7 +117,9 @@ export default class ShadowDocumentProxy {
             if (['mousedown', 'mouseup'].indexOf(name) > -1) {
               const listener: EventListener = function (evt: Event) {
                 // 如果shadowDocument的回调执行了，则document的回调不再执行
-                evt.stopPropagation();
+                if (evt.currentTarget === shadowDocument) {
+                  evt.stopPropagation();
+                }
                 callback(evt);
               };
               getTargetValue(target, target[key])(name, listener, options);

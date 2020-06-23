@@ -54,7 +54,7 @@ export default class ShadowDocumentProxy {
       return node;
     };
     // 修正dom-align中ownerDocument.defaultView.getComputedStyle
-    shadowDocument.defaultView = shadowDocument.ownerDocument.defaultView;
+    shadowDocument.defaultView = sandbox.getContext();
     Object.defineProperty(shadowDocument, 'ownerDocument', { value: null });
     shadowDocument.sandbox = sandbox;
     shadowDocument[SymbolIsShadowDocument] = true;

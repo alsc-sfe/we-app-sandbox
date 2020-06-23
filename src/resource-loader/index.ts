@@ -47,7 +47,7 @@ const sandboxResourceLoader: ResourceLoader<SandboxResourceLoaderOpts> = {
             switch (resource[1].with.type) {
               case ResourceType.jsfile:
                 pResource = fetchText(resource[0])
-                  .then(jstext => sandbox.execScript(jstext));
+                  .then(jstext => sandbox.execScript(`${jstext}//@ sourceURL=${resource[0]}`));
                 break;
               case ResourceType.jstext:
                 pResource = sandbox.execScript(resource[0]) as Promise<any>;

@@ -30,6 +30,8 @@ export default class UISandbox {
   }
 
   destroy() {
+    this.shadowDocumentProxy.destroy();
+
     this.rootElement.style.display = 'none';
     this.rootElement?.parentNode?.removeChild?.(this.rootElement);
   }

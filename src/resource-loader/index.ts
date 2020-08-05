@@ -1,5 +1,4 @@
-import { ResourceLoader, ResourceWithType, ResourceType } from '@saasfe/we-app/es/resource-loader';
-import { SafeHookScope } from '@saasfe/we-app/es/hooks/type';
+import { ResourceLoader, ResourceWithType, ResourceType, SafeHookScope } from '@saasfe/we-app-types';
 import { SymbolByResourceLoader } from '../utils/const';
 
 interface SandboxResourceLoaderOpts {

@@ -1,6 +1,6 @@
 import { isFunction, isUrl } from '../utils';
 import Sandbox from '..';
-import { ResourceWithType, ResourceType } from '@saasfe/we-app/es/resource-loader';
+import { ResourceWithType, ResourceType } from '@saasfe/we-app-types';
 
 export default function intercept(element: HTMLElement, sandbox: Sandbox, opts: any) {
   const tagName = element?.tagName?.toLowerCase?.();

@@ -31,8 +31,7 @@
   "module": "es/index.js",
   "dependencies": {
     "@ice/sandbox": "^1.0.6",
-    "@saasfe/we-app": "beta",
-    "@saasfe/we-app-types": "beta"
+    "@saasfe/we-app-types": "^1.0.0"
   },
   "devDependencies": {
     "@types/classnames": "2",

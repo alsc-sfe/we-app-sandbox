@@ -1,6 +1,6 @@
 {
   "name": "@saasfe/we-app-sandbox",
-  "version": "0.0.1-0",
+  "version": "1.0.0",
   "description": "we app sandbox",
   "homepage": "https://github.com/alsc-sfe/we-app-sandbox",
   "repository": {
@@ -33,7 +33,7 @@
     "@ice/sandbox": "^1.0.6"
   },
   "devDependencies": {
-    "@saasfe/we-app": "beta",
+    "@saasfe/we-app": "^1",
     "@types/classnames": "2",
     "@types/react": "16",
     "@types/react-dom": "16",

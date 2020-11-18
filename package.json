@@ -1,6 +1,6 @@
 {
   "name": "@saasfe/we-app-sandbox",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "we app sandbox",
   "homepage": "https://github.com/alsc-sfe/we-app-sandbox",
   "repository": {
@@ -30,10 +30,10 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "dependencies": {
-    "@ice/sandbox": "^1.0.6"
+    "@ice/sandbox": "^1.0.6",
+    "@saasfe/we-app-types": "^1.0.0"
   },
   "devDependencies": {
-    "@saasfe/we-app": "^1",
     "@types/classnames": "2",
     "@types/react": "16",
     "@types/react-dom": "16",
